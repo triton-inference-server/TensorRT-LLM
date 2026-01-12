@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2024, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright 2024-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -455,12 +455,14 @@ for NUM_GPU in "${NUM_GPUS_TO_TEST[@]}"; do
 
     kill_server
     wait_for_server_terminated ${SERVER_TIMEOUT} ${SERVER_PID[@]}
+
+    # Test the tensorrtllm model with different backends
+
     # Per-request metrics stats
     # Use large number of tokens for KV cache reuse
     echo '{"text_input": "Machine learning is a field of artificial intelligence that focuses on the development of algorithms and statistical models that enable computers to perform tasks without explicit instructions. It involves the use of data and algorithms to imitate the way humans learn, gradually improving its accuracy. Machine learning is used in a variety of applications such as email filtering, detection of network intruders, and computer vision, where it is infeasible to develop an algorithm of specific instructions for performing the task. A subset of machine learning is closely related to computational statistics, which focuses on making predictions using computers.", "max_tokens": 50, "pad_id": 2, "end_id": 2, "return_perf_metrics": true }' > tmp.txt
     echo "Machine learning is a field of artificial intelligence that focuses on the development of algorithms and statistical models that enable computers to perform tasks without explicit instructions. It involves the use of data and algorithms to imitate the way humans learn, gradually improving its accuracy. Machine learning is used in a variety of applications such as email filtering, detection of network intruders, and computer vision, where it is infeasible to develop an algorithm of specific instructions for performing the task. A subset of machine learning is closely related to computational statistics, which focuses on making predictions using computers." > prompt.txt
 
-    # Test the tensorrtllm model with different backends
     for TRITON_BACKEND in tensorrtllm python; do
         for DECOUPLED_TRIAL in non-decoupled decoupled; do
             reset_model_repo
